@@ -136,7 +136,9 @@ public class PecaDAO {
 			return pecas;
 		} catch (SQLException e) {
 			// se explodir excecão eu tento recuperar do backup
-			return new ArrayList<Peca>();
+			GerenciaXML gerenciador = new GerenciaXML("pecas.xml");
+			pecas = gerenciador.recuperarBackup();
+			return pecas;
 		}
 	}
 	
@@ -276,10 +278,27 @@ public class PecaDAO {
 
 	public void fecharConexao() {
 		try {
+			GerenciaXML gerenciador = new GerenciaXML("pecas.xml");
+			gerenciador.gravarBackup(getPecas());
+			
 			conexao.close();
 		} catch (SQLException e) {
 			System.err.println("Ocorreu um erro ao fechar a " +
 					"conexão com o banco de dados");
 		}		
+	}
+
+
+	public void removerAll() {
+		String sql = "delete from pecas where id > 0";
+		
+		try {
+			PreparedStatement stmt = conexao.prepareStatement(sql);
+			
+			stmt.execute();
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}	
 }

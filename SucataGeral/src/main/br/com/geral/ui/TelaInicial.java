@@ -1,6 +1,7 @@
 package br.com.geral.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 
 import br.com.geral.bin.Peca;
 import br.com.geral.dao.PecaDAO;
@@ -40,13 +42,29 @@ public class TelaInicial implements ActionListener {
 	
 	public void montarTela() {
 		prepararJanela();
+		prepararMenu();
 		prepararPainelPrincipal();
 		prepararTabela();
 		
 		prepararBotoes();
 		prepararBarraStatus();
+		preparaTitulo();
 		
 		mostrarJanela();
+	}
+
+	private void prepararMenu() {
+		JMenuBar menu = new JMenuBar();
+		JButton teste = new JButton("Teste");
+		menu.add(teste);
+		
+		janela.setJMenuBar(menu);
+	}
+
+	private void preparaTitulo() {
+		JLabel titulo = new JLabel("SITUAÇÃO DA SUCATA NO MOMENTO", SwingConstants.CENTER);
+		titulo.setFont(new Font("consolas", Font.BOLD, 14));
+		painelPrincipal.add(titulo, BorderLayout.NORTH);
 	}
 
 	private void mostrarJanela() {
@@ -59,10 +77,15 @@ public class TelaInicial implements ActionListener {
 		barraStatus = new JMenuBar();
 		status = new JLabel();
 		alteraStatus("Selecione uma peça e escolha uma ação.");
-		status.setFont(new Font("consolas", Font.BOLD, 14));
+		status.setFont(new Font("consolas", Font.BOLD, 12));
 		barraStatus.add(status);
 		
-		painelPrincipal.add(barraStatus, BorderLayout.SOUTH);
+		JPanel painelInferior = new JPanel(new BorderLayout(5, 5));
+		painelInferior.add(barraStatus, BorderLayout.SOUTH);
+		painelInferior.add(painelBotoes, BorderLayout.CENTER);
+		
+		painelPrincipal.add(painelInferior, BorderLayout.SOUTH);
+		//painelPrincipal.add(barraStatus, BorderLayout.SOUTH);
 	}
 
 	private void prepararTabela() {
@@ -87,7 +110,7 @@ public class TelaInicial implements ActionListener {
 
 	private void prepararBotoes() {
 		botao = new JButton[6];
-		String[] nomesDosBotoes = {"Adicionar", "Remover", "Editar", "Listar", "Pesquisar", "Sair"};
+		String[] nomesDosBotoes = {"Adicionar", "Remover", "Editar", "Limpar", "Pesquisar", "Sair"};
 		Character[] atalhos = {'a', 'r', 'e','l','p','s'};
 		painelBotoes = new JPanel(new GridLayout(2, 3, 5, 5));
 		
@@ -99,7 +122,8 @@ public class TelaInicial implements ActionListener {
 			
 			botao[i].addActionListener(this);
 		}
-		painelPrincipal.add(painelBotoes, BorderLayout.NORTH);
+		botao[5].setBackground(Color.ORANGE);
+		//painelPrincipal.add(painelBotoes, BorderLayout.NORTH);
 	}
 
 	private void prepararPainelPrincipal() {
@@ -108,7 +132,7 @@ public class TelaInicial implements ActionListener {
 	}
 
 	private void prepararJanela() {
-		janela = new JFrame("SUCATA - Geral.Info -> 0.1v");
+		janela = new JFrame("SUCATA - Geral.Info -> v0.1");
 		janela.setResizable(false);
 		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -133,12 +157,12 @@ public class TelaInicial implements ActionListener {
 				int opcao = JOptionPane.showConfirmDialog(janela, "Deseja realmente remover essa peça?");
 				if (opcao == JOptionPane.YES_OPTION) {
 					if (repositorio.remover(peca)) {
-						JOptionPane.showMessageDialog(null, "Peça removida com sucesso.");
+						JOptionPane.showMessageDialog(janela, "Peça removida com sucesso.");
 						atualizarTabela();
 					}
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "Por favor selecione uma peça");
+				JOptionPane.showMessageDialog(janela, "Por favor selecione uma peça");
 			}
 			break;
 			
@@ -149,12 +173,15 @@ public class TelaInicial implements ActionListener {
 				new TelaEditar(janela, peca).montarTela();
 				atualizarTabela();
 			} else {
-				JOptionPane.showMessageDialog(null, "Por favor selecione uma peça");
+				JOptionPane.showMessageDialog(janela, "Por favor selecione uma peça");
 			}
 			break;
-			
-		case "Listar":
-			// exibir na tabela
+	
+		case "Limpar":
+			if (JOptionPane.showConfirmDialog(janela, "Deseja realmente excluir todas as peças?") == JOptionPane.OK_OPTION) {
+				repositorio.removerAll();
+				atualizarTabela();
+			}
 			break;
 			
 		case "Pesquisar":
@@ -198,7 +225,8 @@ public class TelaInicial implements ActionListener {
 	 * Procedimentos antes do fechamento da aplicação.
 	 * */
 	private void fecharAplicacao() {
-		//JOptionPane.showMessageDialog(null, "Saindo... Até mais!");
+		alteraStatus("Fazendo o backup ... Aguarde!");
+		//JOptionPane.showMessageDialog(janela, "Saindo... Até mais!");
 		repositorio.fecharConexao();
 		System.exit(0);
 		// algum aviso para o usuário
