@@ -138,6 +138,9 @@ public class PecaDAO {
 			// se explodir excecão eu tento recuperar do backup
 			GerenciaXML gerenciador = new GerenciaXML("pecas.xml");
 			pecas = gerenciador.recuperarBackup();
+			for (Peca peca : pecas) {
+				adicionar(peca);
+			}
 			return pecas;
 		}
 	}
@@ -301,4 +304,27 @@ public class PecaDAO {
 			e.printStackTrace();
 		}
 	}	
+	
+	public int getID(Peca peca) {
+		
+		String sql = "select * from pecas where descricao = ? and marca = ? and modelo = ?";
+		
+		try {
+			PreparedStatement stmt = conexao.prepareStatement(sql);
+			stmt.setString(1, peca.getDescricao());
+			stmt.setString(2, peca.getMarca());
+			stmt.setString(3, peca.getModelo());
+			
+			ResultSet rs = stmt.executeQuery();
+			
+			if (rs.next()) {
+				return rs.getInt("id");
+			}
+			rs.close();
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 }

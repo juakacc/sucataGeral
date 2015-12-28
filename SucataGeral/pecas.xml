@@ -1,1 +1,26 @@
-<list/>
+<list>
+  <peca>
+    <id>1</id>
+    <descricao>tela</descricao>
+    <marca>positivo</marca>
+    <modelo>sim</modelo>
+  </peca>
+  <peca>
+    <id>2</id>
+    <descricao>fonte real</descricao>
+    <marca>multilaser</marca>
+    <modelo>ar</modelo>
+  </peca>
+  <peca>
+    <id>3</id>
+    <descricao>cabo</descricao>
+    <marca>HP</marca>
+    <modelo>turion</modelo>
+  </peca>
+  <peca>
+    <id>4</id>
+    <descricao>carregador</descricao>
+    <marca>positivo</marca>
+    <modelo>sim+</modelo>
+  </peca>
+</list>

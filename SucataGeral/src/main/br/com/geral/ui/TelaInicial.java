@@ -8,10 +8,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -54,16 +57,31 @@ public class TelaInicial implements ActionListener {
 	}
 
 	private void prepararMenu() {
-		JMenuBar menu = new JMenuBar();
-		JButton teste = new JButton("Teste");
-		menu.add(teste);
+		JMenuBar barraMenu = new JMenuBar();
+		JMenu arquivo, ajuda;
 		
-		janela.setJMenuBar(menu);
+		arquivo = new JMenu("Arquivo");
+		ajuda = new JMenu("Ajuda");
+		
+		barraMenu.add(arquivo);
+		barraMenu.add(ajuda);
+		
+		//ARQUIVO
+		JMenuItem sair = new JMenuItem("Sair");
+		sair.addActionListener(this);
+		arquivo.add(sair);
+		
+		//AJUDA
+		JMenuItem about = new JMenuItem("Sobre Sucata.Geral");
+		about.addActionListener(this);
+		ajuda.add(about);
+		
+		janela.setJMenuBar(barraMenu);
 	}
 
 	private void preparaTitulo() {
 		JLabel titulo = new JLabel("SITUAÇÃO DA SUCATA NO MOMENTO", SwingConstants.CENTER);
-		titulo.setFont(new Font("consolas", Font.BOLD, 14));
+		titulo.setFont(new Font("Verdana", Font.BOLD, 20));
 		painelPrincipal.add(titulo, BorderLayout.NORTH);
 	}
 
@@ -71,6 +89,7 @@ public class TelaInicial implements ActionListener {
 		janela.pack();
 		janela.setSize(500, 600);
 		janela.setVisible(true);
+		new TelaBoasVindas(janela).montarTela();
 	}
 
 	private void prepararBarraStatus() {
@@ -85,12 +104,12 @@ public class TelaInicial implements ActionListener {
 		painelInferior.add(painelBotoes, BorderLayout.CENTER);
 		
 		painelPrincipal.add(painelInferior, BorderLayout.SOUTH);
-		//painelPrincipal.add(barraStatus, BorderLayout.SOUTH);
 	}
 
 	private void prepararTabela() {
 		tabela = new JTable();
 		tabela.setFont(new Font("arial", Font.PLAIN, 12));
+		tabela.setBackground(Color.WHITE);
 		
 		JScrollPane scroll = new JScrollPane();
 		scroll.getViewport().add(tabela);
@@ -123,7 +142,6 @@ public class TelaInicial implements ActionListener {
 			botao[i].addActionListener(this);
 		}
 		botao[5].setBackground(Color.ORANGE);
-		//painelPrincipal.add(painelBotoes, BorderLayout.NORTH);
 	}
 
 	private void prepararPainelPrincipal() {
@@ -132,7 +150,8 @@ public class TelaInicial implements ActionListener {
 	}
 
 	private void prepararJanela() {
-		janela = new JFrame("SUCATA - Geral.Info -> v0.1");
+		janela = new JFrame("Sucata.Geral -> v0.1");
+		janela.setIconImage(new ImageIcon("icon.png").getImage());
 		janela.setResizable(false);
 		janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -194,6 +213,12 @@ public class TelaInicial implements ActionListener {
 			fecharAplicacao();
 			break;
 			
+			
+			
+		case "Sobre Sucata.Geral":
+			new TelaSobre(janela).montarTela();
+			break;
+			
 		default:
 			break;
 		}
@@ -206,11 +231,10 @@ public class TelaInicial implements ActionListener {
 	 * @return Peça
 	 * */
 	public static Peca recuperarPecaDaLinha(JTable tab, int linha) {
-		
-		return new Peca(Integer.parseInt(tab.getValueAt(linha, 0).toString()), 
-				tab.getValueAt(linha, 1).toString(), 
-				tab.getValueAt(linha, 2).toString(), 
-				tab.getValueAt(linha, 3).toString());
+		return new Peca(Integer.parseInt(tab.getValueAt(linha, Peca.ID).toString()), 
+				tab.getValueAt(linha, Peca.DESCRICAO).toString(), 
+				tab.getValueAt(linha, Peca.MARCA).toString(), 
+				tab.getValueAt(linha, Peca.MODELO).toString());
 	}
 
 	/**

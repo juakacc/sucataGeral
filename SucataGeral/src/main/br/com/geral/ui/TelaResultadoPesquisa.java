@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -18,11 +17,8 @@ import javax.swing.JTable;
 import br.com.geral.bin.Peca;
 import br.com.geral.dao.PecaDAO;
 
-public class TelaResultadoPesquisa implements ActionListener {
+public class TelaResultadoPesquisa extends Tela implements ActionListener {
 
-	private JFrame janelaChamadora;
-	private JDialog janela;
-	private JPanel painelPrincipal;
 	private JButton remover, editar, cancelar;
 	
 	private List<Peca> pecas;
@@ -30,6 +26,7 @@ public class TelaResultadoPesquisa implements ActionListener {
 	private JTable tabela;
 	
 	public TelaResultadoPesquisa(JFrame janelaChamadora, List<Peca> pecas) {
+		super("Resultados da Pesquisa");
 		this.janelaChamadora = janelaChamadora;
 		this.pecas = pecas;
 	}
@@ -53,21 +50,9 @@ public class TelaResultadoPesquisa implements ActionListener {
 	}
 
 
-	private void mostrarJanela() {
-		janela.pack();
+	protected void mostrarJanela() {
 		janela.setSize(400, 200);
-		janela.setVisible(true);
-	}
-
-	private void prepararPainel() {
-		painelPrincipal = new JPanel(new BorderLayout(5, 5));		
-		janela.add(painelPrincipal);
-	}
-
-	private void prepararJanela() {
-		janela = new JDialog(janelaChamadora, "Resultados da Pesquisa", true);
-		janela.setResizable(false);
-		janela.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		super.mostrarJanela();
 	}
 
 	private void prepararBotoes() {
@@ -109,11 +94,11 @@ public class TelaResultadoPesquisa implements ActionListener {
 				int opcao = JOptionPane.showConfirmDialog(janela, "Deseja realmente remover essa peça?");
 				if (opcao == JOptionPane.YES_OPTION) {
 					if (PecaDAO.getInstancia().remover(peca)) {
-						JOptionPane.showMessageDialog(null, "Peça removida com sucesso.");
+						JOptionPane.showMessageDialog(janela, "Peça removida com sucesso.");
 					}
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "Por favor selecione uma peça");
+				JOptionPane.showMessageDialog(janela, "Por favor selecione uma peça");
 			}
 			break;
 
@@ -123,6 +108,8 @@ public class TelaResultadoPesquisa implements ActionListener {
 				peca = TelaInicial.recuperarPecaDaLinha(tabela, linha);
 				new TelaEditar(janelaChamadora, peca).montarTela();
 				// ver ainda o que o vou fazer
+			} else {
+				JOptionPane.showMessageDialog(janela, "Por favor selecione uma peça");
 			}
 			break;
 			
@@ -130,12 +117,5 @@ public class TelaResultadoPesquisa implements ActionListener {
 			break;
 		}
 		fecharJanela();
-	}
-
-	/**
-	 * 
-	 */
-	private void fecharJanela() {
-		janela.dispose();
 	}
 }

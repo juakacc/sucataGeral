@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -17,10 +16,9 @@ import javax.swing.JTextField;
 import br.com.geral.bin.Peca;
 import br.com.geral.dao.PecaDAO;
 
-public class TelaEditar implements ActionListener {
+public class TelaEditar extends Tela implements ActionListener {
 	
-	private JDialog janela;
-	private JPanel painelPrincipal, painelLabelText;
+	private JPanel painelLabelText;
 	private JTextField descricao, marca, modelo;	
 	private JLabel descricaoL, marcaL, modeloL;
 	private JButton pronto, cancelar;
@@ -29,34 +27,29 @@ public class TelaEditar implements ActionListener {
 	private Peca peca;
 	
 	public TelaEditar(JFrame janelaChamadora, Peca peca) {
-		janela = new JDialog(janelaChamadora, "Adiconar Peça", true);
+		super("Editar Peça");
+		this.janelaChamadora = janelaChamadora;
 		this.repositorioPecas = PecaDAO.getInstancia();
 		this.peca = peca;
 	}
 
-//	public TelaEditar(Frame janela2, Peca peca2) {
-//		this.janelaChamadora = (JFrame) janela2;
-//	}
-
 	protected void montarTela() {
-		preparaJanela();
-		preparaPainel();
+		prepararJanela();
+		prepararPainel();
 		
-		preparaCampos();
-		preparaBotoes();
-		preparaLabels();
-		preparaPainelCamposELabels();
+		prepararCampos();
+		prepararBotoes();
+		prepararLabels();
+		prepararPainelCamposELabels();
 		mostrarJanela();
 	}
 
-
-	private void mostrarJanela() {
-		janela.pack();
+	protected void mostrarJanela() {
 		janela.setSize(300, 200);
-		janela.setVisible(true);
+		super.mostrarJanela();
 	}
 
-	private void preparaPainelCamposELabels() {
+	private void prepararPainelCamposELabels() {
 		painelLabelText = new JPanel(new GridLayout(3, 2));
 		painelLabelText.add(descricaoL);
 		painelLabelText.add(descricao);
@@ -68,7 +61,7 @@ public class TelaEditar implements ActionListener {
 		painelPrincipal.add(painelLabelText, BorderLayout.CENTER);
 	}
 
-	private void preparaLabels() {
+	private void prepararLabels() {
 		descricaoL = new JLabel("DESCRIÇÃO:");
 		descricaoL.setFont(new Font("consolas", Font.BOLD, 14));
 		
@@ -79,18 +72,7 @@ public class TelaEditar implements ActionListener {
 		modeloL.setFont(new Font("consolas", Font.BOLD, 14));
 	}
 
-
-	private void preparaPainel() {
-		painelPrincipal = new JPanel(new BorderLayout());		
-		janela.add(painelPrincipal);
-	}
-
-	private void preparaJanela() {
-		janela.setResizable(false);
-		janela.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-	}
-
-	private void preparaCampos() {
+	private void prepararCampos() {
 		descricao = new JTextField(20);
 		descricao.setFont(new Font("consolas", Font.PLAIN, 14));
 		descricao.setText(peca.getDescricao());
@@ -104,7 +86,7 @@ public class TelaEditar implements ActionListener {
 		marca.setText(peca.getMarca());
 	}
 
-	private void preparaBotoes() {
+	private void prepararBotoes() {
 		pronto = new JButton("Pronto");
 		pronto.setFont(new Font("consolas", Font.BOLD, 14));
 		pronto.setMnemonic('p');
@@ -139,7 +121,7 @@ public class TelaEditar implements ActionListener {
 			if (descricao.getText().trim().isEmpty() || 
 				marca.getText().trim().isEmpty() || 
 				modelo.getText().trim().isEmpty()) {
-					JOptionPane.showMessageDialog(null, "Informações incompletas");
+					JOptionPane.showMessageDialog(janela, "Informações incompletas");
 			} else {
 				Peca peca = recuperarPeca();
 				repositorioPecas.atualizar(peca);
@@ -151,12 +133,5 @@ public class TelaEditar implements ActionListener {
 			fecharJanela();
 			break;
 		}
-	}
-
-	/**
-	 * 
-	 */
-	private void fecharJanela() {
-		janela.dispose();
 	}
 }
